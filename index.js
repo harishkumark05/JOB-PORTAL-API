@@ -1,11 +1,6 @@
-const express = require('express');
-const app = express();
-
-app.get('/',(req,res)=>{
-    res.send('home')
-})
+const app = require('./src/app');
 
 const PORT = process.env.PORT || 3000;
-app.listen(()=>{
+app.listen(PORT,()=>{
     console.log(`Server is up on port: ${PORT}`)
-},PORT)
+})
