@@ -13,6 +13,7 @@ const getJobs = (req,res)=>{
 
     res.status(200).json({
         success: true,
+        loggedInuser:req.user,
         requestTime: req.reqTime,
         data: jobs
     });
