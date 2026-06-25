@@ -22,7 +22,13 @@ const authMiddleware =(req,res,next)=>{
         token,
         process.env.JWT_SECRET
        )
+       
        req.user = decoded;
+       console.log("req.user:", req.user);
+console.log("job data:", {
+  ...req.body,
+  createdBy: req.user?._id
+});
        next()
     }catch(e){
     return res.status(401).json({

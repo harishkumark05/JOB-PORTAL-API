@@ -17,5 +17,28 @@ const loginSchema = joi.object({
         .required()
 
 });
+const createJobSchema = joi.object({
 
-module.exports = {registerSchema, loginSchema}
+    title: joi.string()
+        .trim()
+        .required(),
+
+    company: joi.string()
+        .trim()
+        .required(),
+
+    location: joi.string()
+        .trim()
+        .required(),
+
+    salary: joi.number()
+        .positive()
+        .required(),
+
+    description: joi.string()
+        .trim()
+        .required()
+
+});
+
+module.exports = {registerSchema, loginSchema, createJobSchema}

@@ -1,4 +1,4 @@
-const {loginSchema, registerSchema} = require('../validators/auth.validator')
+const {loginSchema, registerSchema,createJobSchema} = require('../validators/auth.validator')
 const inputValidate = (schema)=>{
     return (req,res,next)=>{
     const {error}= schema.validate(req.body);
