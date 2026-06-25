@@ -1,7 +1,7 @@
 const User =require('../models/user.model');
 
 const findByEmail =  (email)=>{
-    return User.findOne({email})
+    return User.findOne(email)
 }
 const createUser =  (userData)=>{
     return User.create(userData)
