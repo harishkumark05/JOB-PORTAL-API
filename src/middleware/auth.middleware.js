@@ -20,15 +20,16 @@ const authMiddleware =(req,res,next)=>{
        const token = parts[1];
        const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET
+        process.env.JWT_ACCESS_SECRET
        )
        
        req.user = decoded;
        console.log("req.user:", req.user);
-console.log("job data:", {
-  ...req.body,
-  createdBy: req.user?._id
-});
+//        console.log("req.user:", req.user);
+// console.log("job data:", {
+//   ...req.body,
+//   createdBy: req.user?._id
+// });
        next()
     }catch(e){
     return res.status(401).json({

@@ -5,7 +5,15 @@ const createJob = async(data)=>{
     return job
 }
 
-const getJobs = async(data)=>{
-    return await jobRepo.getJobs(data)
+const getJobs = async(userId,query)=>{
+    return await jobRepo.getJobs(userId, query)
 }
-module.exports = {createJob, getJobs}
+
+const getJobById = async(jobid,userId)=>{
+   return await jobRepo.getJobById(jobid,userId)
+}
+
+const updateJob = async(jobid,userId,updateData)=>{
+    return await jobRepo.updateJob(jobid,userId,updateData)
+}
+module.exports = {createJob, getJobs,getJobById,updateJob}

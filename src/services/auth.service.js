@@ -34,28 +34,66 @@ const login = async ({email,password})=>{
     if (!matched) {
         throw new Error("Invalid password");
     }
-        const token =
+        const accessToken =
         jwt.sign(
             {
                 _id: user._id,
-                email: user.email
+                email: user.email,
+                roles:user.roles
             },
-            process.env.JWT_SECRET,
+            process.env.JWT_ACCESS_SECRET,
             {
                 expiresIn:
-                    process.env.JWT_EXPIRES_IN
+                    process.env.JWT_ACCESS_EXPIRES_IN
             }
         );
+
+        const refreshToken = jwt.sign(
+            {_id: user._id, email: user.email},
+            process.env.JWT_REFRESH_SECRET,
+            {
+                expiresIn: process.env.JWT_REFRESH_EXPIRES_IN
+            }
+        );
+        await authRepo.updateRefreshToken(user._id, refreshToken);
         return {
-            token,
+            accessToken,
+            refreshToken,
             user:{
                 _id:user._id,
                 name:user.name,
-                email:user.email
+                email:user.email,
+                roles:user.roles
             }
         }
 
 
 }
+const refreshAccessToken  = async (refreshToken)=>{
 
-module.exports = {login,register}
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await authRepo.findById(decoded._id);
+    if (!user || user.refreshToken !== refreshToken) {
+        throw new Error("Invalid refresh token");
+    }
+    const accessToken = 
+        jwt.sign(
+            {
+                _id:decoded._id,
+                email:user.email,
+                roles:user.roles
+            },
+            process.env.JWT_ACCESS_SECRET,
+            {
+                expiresIn:
+                    process.env.JWT_ACCESS_EXPIRES_IN
+            }
+        );
+        console.log('refreshAccessToken:', accessToken);
+        return accessToken;
+}
+
+const logout = async (userId)=>{
+    return await authRepo.removeRefreshToken(userId)
+}
+module.exports = {login,register,refreshAccessToken,logout}

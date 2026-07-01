@@ -1,12 +1,18 @@
 const User =require('../models/user.model');
 
-const findByEmail =  (email)=>{
-    return User.findOne(email)
+const findByEmail = async (email)=>{
+    return await User.findOne(email)
 }
-const createUser =  (userData)=>{
-    return User.create(userData)
+const createUser =  async (userData)=>{
+    return await User.create(userData)
 }
-const findById =  (id)=>{
-    return User.findById(id)
+const findById =  async (id)=>{
+    return await User.findById(id)
 }
-module.exports ={findByEmail,createUser,findById}
+const updateRefreshToken = async (userId,refreshToken)=>{
+    return  await User.findOneAndUpdate({_id:userId},{refreshToken},{new:true})
+}
+const removeRefreshToken = async (id)=>{
+    return await User.findOneAndUpdate({_id:id},{$set:{refreshToken:null}},{new:true});
+}
+module.exports ={findByEmail,createUser,findById,updateRefreshToken,removeRefreshToken}

@@ -1,4 +1,5 @@
 const jobService = require('../services/job.service');
+const mongoose = require('mongoose');
 const getJobs = async (req,res)=>{
     //   const jobs = [
     //     {
@@ -12,13 +13,18 @@ const getJobs = async (req,res)=>{
     // ];
 
   try{
-    const jobs = await jobService.getJobs(req.user._id)
+    const result = await jobService.getJobs(req.user._id,req.query)
+    const {
+    jobs,
+    ...pagination
+} = result;
 res.status(200).json({
         success: true,
-        count: jobs.length,
-        data: jobs
+       ...pagination,
+       data:jobs
     });
   }catch(error){
+    console.log()
 res.status(500).json({
 
             success: false,
@@ -51,4 +57,96 @@ const createJob =async (req,res)=>{
     }
 }
 
-module.exports = {getJobs,createJob};
+const getJobById = async(req,res)=>{
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Job ID"
+        });
+    }
+  try{
+    const job = await jobService.getJobById(req.params.id,req.user._id)
+
+        if (!job) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Job not found"
+
+            });
+
+        }
+
+        res.status(200).json({
+
+            success: true,
+
+            data: job
+
+        });
+
+  }catch(e){
+ res.status(500).json({
+
+            success: false,
+
+            message: e.message
+
+        });
+  }
+}
+
+const updateJob = async (req,res)=>{
+  console.log('update Job')
+  try{
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+      return res.status(400).json({
+
+                success: false,
+
+                message: "Invalid Job ID"
+
+            });
+          }
+
+      const job = await jobService.updateJob(
+        req.params.id,
+        req.user._id,
+        req.body 
+      )
+       if (!job) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Job not found"
+
+            });
+
+        }
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Job updated successfully",
+
+            data: job
+
+        });
+    
+  }catch(error){
+ res.status(500).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+  }
+}
+module.exports = {getJobs,createJob, getJobById,updateJob};

@@ -33,4 +33,43 @@ const login =async (req,res)=>{
     })
    }
 }
-module.exports ={register,login};
+const refreshAccessToken = async (req, res) => {
+    try{
+          const {refreshToken} = req.body;
+          if(!refreshToken){
+            return res.status(400).json({
+                success:false,
+                message:'Refresh token is missing'
+            })
+          }
+          console.log('refreshToken-controller')
+          const accessToken = await authService.refreshAccessToken(refreshToken);
+          res.status(200).json({
+            success:true,
+            accessToken
+          })
+    }catch(e){
+     res.status(401).json({
+
+            success: false,
+
+            message: "Invalid or Expired Refresh Token"
+
+        });
+    }
+}
+const logout = async (req,res)=>{
+  try{
+      await authService.logout(req.user._id);
+      res.status(200).json({
+        status:true,
+        message:'logout successfull'
+      })
+  }catch(e){
+    res.status(500).json({
+        success:false,
+        message:e.message
+    })
+}
+}
+module.exports ={register,login,refreshAccessToken, logout}
